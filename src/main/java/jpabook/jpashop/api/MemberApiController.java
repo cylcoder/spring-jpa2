@@ -6,7 +6,9 @@ import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.service.MemberService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,11 +45,28 @@ public class MemberApiController {
     return new CreateMemberResponse(id);
   }
 
+  @PutMapping("/api/v2/members/{id}")
+  public UpdateMemberResponse updateMemberV2(
+      @PathVariable Long id,
+      @RequestBody @Valid UpdateMemberRequest request
+  ) {
+    memberService.update(id, request.name);
+    return new UpdateMemberResponse(id, request.name);
+  }
+
   public record CreateMemberRequest(String name, Address address) {
 
   }
 
   public record CreateMemberResponse(Long id) {
+
+  }
+
+  public record UpdateMemberRequest(String name) {
+
+  }
+
+  public record UpdateMemberResponse(Long id, String name) {
 
   }
 
