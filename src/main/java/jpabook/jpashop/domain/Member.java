@@ -1,6 +1,7 @@
 package jpabook.jpashop.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,12 +18,13 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
+    @NotEmpty
     private String name;
 
     @Embedded
     private Address address;
 
-    @OneToMany(mappedBy = "member") // orders 테이블에 있는 member
+    @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 
 }
