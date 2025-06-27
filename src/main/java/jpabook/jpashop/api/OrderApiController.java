@@ -1,8 +1,11 @@
 package jpabook.jpashop.api;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
+import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +32,54 @@ public class OrderApiController {
       order.getOrderItems().forEach(o -> o.getItem().getName());
     }
     return orders;
+  }
+
+  @GetMapping("/api/v2/orders")
+  public List<OrderDto> ordersV2() {
+    return orderRepository.findAll()
+        .stream()
+        .map(OrderDto::from)
+        .toList();
+  }
+
+  public record OrderDto(
+     Long orderId,
+     String name,
+     LocalDateTime orderDate,
+     OrderStatus orderStatus,
+     Address address,
+     List<OrderItemDto> orderItems
+  ) {
+
+    static OrderDto from(Order order) {
+      return new OrderDto(
+          order.getId(),
+          order.getMember().getName(),
+          order.getOrderDate(),
+          order.getStatus(),
+          order.getDelivery().getAddress(),
+          order.getOrderItems()
+              .stream()
+              .map(OrderItemDto::from)
+              .toList()
+      );
+    }
+  }
+
+  public record OrderItemDto(
+      String itemName,
+      int orderPrice,
+      int count
+  ) {
+
+    static OrderItemDto from(OrderItem orderItem) {
+      return new OrderItemDto(
+          orderItem.getItem().getName(),
+          orderItem.getOrderPrice(),
+          orderItem.getCount()
+      );
+    }
+
   }
 
 }
