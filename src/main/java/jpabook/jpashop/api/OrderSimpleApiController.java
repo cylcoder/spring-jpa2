@@ -6,7 +6,6 @@ import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
-import jpabook.jpashop.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +45,20 @@ public class OrderSimpleApiController {
   public List<SimpleOrderDto> orderV2() {
     return orderRepository
         .findAll()
+        .stream()
+        .map(SimpleOrderDto::from)
+        .toList();
+  }
+
+  /*
+  * V3. 엔티티 조회 후 DTO로 변환(fetch join O)
+  *   - fetch join으로 쿼리 1번 호출
+  * 참고: fetch join에 대한 자세한 내용은 JPA 기본편 참고(정말 중요)
+  * */
+  @GetMapping("/api/v3/simple-orders")
+  public List<SimpleOrderDto> orderV3() {
+    return orderRepository
+        .findAllWithMemberAndDelivery()
         .stream()
         .map(SimpleOrderDto::from)
         .toList();
