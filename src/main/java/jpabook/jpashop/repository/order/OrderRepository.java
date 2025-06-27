@@ -9,6 +9,7 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
@@ -110,6 +111,16 @@ public class OrderRepository {
             + "JOIN FETCH o.member m "
             + "JOIN FETCH o.delivery d", Order.class)
             .getResultList();
+    }
+
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+            "SELECT DISTINCT o FROM Order o "
+                + "JOIN FETCH o.member m "
+                + "JOIN FETCH o.delivery d "
+                + "JOIN FETCH o.orderItems oi "
+                + "JOIN FETCH oi.item i", Order.class
+        ).getResultList();
     }
 
 }
